@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------------------------------------
 -- get factory workers
-CREATE OR REPLACE FUNCTION get_Workers(id_factory integer) RETURNS SETOF humans AS
+CREATE OR REPLACE FUNCTION get_workers(id_factory integer) RETURNS SETOF humans AS
 $$
 SELECT humans.name, humans.surname, humans.birth_date, humans.contacts, humans.address
 FROM humans
