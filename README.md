@@ -29,7 +29,7 @@
 обрабатываться отдельно.
 
 ### Даталогическая Модель базы данных 
-![модель базы данных](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/data-model/courcseworDM.png
+![модель базы данных](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/data-model/courseworkDM.png)
 
 ### Описание основных прецедентов
 
