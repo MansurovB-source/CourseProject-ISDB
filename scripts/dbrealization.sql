@@ -105,7 +105,6 @@ CREATE TABLE providers
     FOREIGN KEY (id_delivery_place) REFERENCES delivery_places (id_delivery_place)
         ON UPDATE CASCADE
         ON DELETE SET NULL
-
 );
 
 CREATE TABLE clients
@@ -129,17 +128,17 @@ CREATE TABLE clients
 CREATE TABLE orders
 (
     id_order        serial,
-    from            integer   NOT NULL,
-    to              integer   NOT NULL,
+    _from            integer   NOT NULL,
+    _to              integer   NOT NULL,
     id_sausage      integer   NOT NULL,
     sausages_weight float     NOT NULL CHECK (sausages_weight > 0),
     ord_time        timestamp NOT NULL,
     special         boolean   NOT NULL,
     PRIMARY KEY (id_order),
-    FOREIGN KEY (from) REFERENCES clients (id_client)
+    FOREIGN KEY (_from) REFERENCES clients (id_client)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (to) REFERENCES providers (id_provider)
+    FOREIGN KEY (_to) REFERENCES providers (id_provider)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
@@ -225,20 +224,19 @@ CREATE TABLE storages
 CREATE TABLE return_client
 (
     id_return       serial,
-    from            integer NOT NULL,
-    to              integer NOT NULL,
+    _from            integer NOT NULL,
+    _to              integer NOT NULL,
     id_sausage      integer NOT NULL,
     sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
     ret_time        time    NOT NULL,
     PRIMARY KEY (id_return),
-    FOREIGN KEY (from) REFERENCES clients (id_client)
+    FOREIGN KEY (_from) REFERENCES clients (id_client)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (to) REFERENCES providers (id_provider)
+    FOREIGN KEY (_to) REFERENCES providers (id_provider)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
-
 );
 
 CREATE TABLE factory_sausages
@@ -274,16 +272,16 @@ CREATE TABLE farms
 CREATE TABLE return_provider
 (
     id_ret_provider serial,
-    from            integer NOT NULL,
-    to              integer NOT NULL,
+    _from            integer NOT NULL,
+    _to              integer NOT NULL,
     id_sausage      integer NOT NULL,
     sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
     ret_time        time    NOT NULL,
     PRIMARY KEY (id_ret_provider),
-    FOREIGN KEY (from) REFERENCES providers (id_provider)
+    FOREIGN KEY (_from) REFERENCES providers (id_provider)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (to) REFERENCES factories (id_factory)
+    FOREIGN KEY (_to) REFERENCES factories (id_factory)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)

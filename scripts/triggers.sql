@@ -10,14 +10,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-
 CREATE TRIGGER inc_DelClientNum
     AFTER INSERT
     ON clients
     FOR EACH ROW
 EXECUTE PROCEDURE inc_DelClientNum();
 --------------------------------------------------------------------------------------------------------------
+
 
 --------------------------------------------------------------------------------------------------------------
 -- decrement client number delivery_place
@@ -30,8 +29,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-
 
 CREATE TRIGGER dec_DelClientNum
     AFTER DELETE
@@ -53,7 +50,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER int_WorkerNum
+CREATE TRIGGER inc_WorkerNum
     AFTER INSERT
     ON providers
     FOR EACH ROW
@@ -73,7 +70,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER int_WorkerNum
+CREATE TRIGGER dec_WorkerNum
     AFTER DELETE
     ON providers
     FOR EACH ROW
@@ -91,7 +88,7 @@ DECLARE
     weight    integer;
 
 BEGIN
-    SELECT id_delivery_place FROM clients WHERE clients.id_client = NEW.from INTO del_place;
+    SELECT id_delivery_place FROM clients WHERE clients.id_client = NEW._from INTO del_place;
     SELECT id_provider FROM providers WHERE providers.id_delivery_place = del_place INTO provider;
     SELECT storages.sausages_weight
     FROM storages
@@ -125,7 +122,7 @@ BEGIN
     ELSE
         RAISE EXCEPTION 'We do not have this product in our storage, it would be soon';
     END IF;
-    NEW.from = provider;
+    NEW._from = provider;
     NEW.ord_time = localtimestamp;
     RETURN NEW;
 END;
@@ -150,7 +147,7 @@ DECLARE
 BEGIN
     SELECT id_client_payment
     FROM client_payments
-    WHERE (id_client = NEW.from AND id_provider = NEW.to AND dept_date = current_date AND
+    WHERE (id_client = NEW._from AND id_provider = NEW._to AND dept_date = current_date AND
            paying = FALSE)
     INTO client_payment;
     SELECT price FROM sausages WHERE (sausages.id_sausage = New.id_sausage) INTO price;
@@ -160,13 +157,13 @@ BEGIN
         WHERE id_client_payment = client_payment;
     ELSE
         INSERT INTO client_payments(id_client, id_provider, sum, dept_date, paying, payment_date)
-        VALUES (NEW.from, NEW.to, price * NEW.sausages_weight, current_date, FALSE, NULL);
+        VALUES (NEW._from, NEW._to, price * NEW.sausages_weight, current_date, FALSE, NULL);
     END IF;
 
-    SELECT id_factory FROM providers WHERE providers.id_provider = NEW.to INTO factory;
+    SELECT id_factory FROM providers WHERE providers.id_provider = NEW._to INTO factory;
     SELECT id_provider_payment
     FROM providers_payments
-    WHERE (id_provider = NEW.to AND id_factory = factory AND dept_date = current_date AND paying = FALSE)
+    WHERE (id_provider = NEW._to AND id_factory = factory AND dept_date = current_date AND paying = FALSE)
     INTO provider_payment;
     IF provider_payment THEN
         UPDATE providers_payments
@@ -174,7 +171,7 @@ BEGIN
         WHERE id_provider_payment = provider_payment;
     ELSE
         INSERT INTO providers_payments(id_provider, id_factory, sum, dept_date, paying, payment_date)
-        VALUES (NEW.to, factory, price * NEW.sausages_weight, current_date, FALSE, NULL);
+        VALUES (NEW._to, factory, price * NEW.sausages_weight, current_date, FALSE, NULL);
     END IF;
 END
 $$ LANGUAGE plpgsql;
@@ -185,6 +182,7 @@ CREATE TRIGGER pay
     FOR EACH ROW
 EXECUTE PROCEDURE payment();
 --------------------------------------------------------------------------------------------------------------
+
 
 ---------------------------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION client_pay() RETURNS TRIGGER AS
@@ -223,7 +221,7 @@ BEGIN
 END
 $$ language plpgsql;
 
-CREATE TRIGGER client_pay
+CREATE TRIGGER provider_pay
     BEFORE UPDATE
     ON providers_payments
     FOR EACH ROW
@@ -239,9 +237,9 @@ DECLARE
     del_place integer;
     provider  integer;
 BEGIN
-    SELECT id_delivery_place FROM clients WHERE clients.id_client = NEW.from INTO del_place;
+    SELECT id_delivery_place FROM clients WHERE clients.id_client = NEW._from INTO del_place;
     SELECT id_provider FROM providers WHERE providers.id_delivery_place = del_place INTO provider;
-    NEW.to = provider;
+    NEW._to = provider;
     NEW.ret_time = localtime;
     RETURN NEW;
 END;
@@ -261,7 +259,7 @@ CREATE OR REPLACE FUNCTION return_provider() RETURNS TRIGGER AS
 $$
 DECLARE
 BEGIN
-    SELECT id_factory FROM providers WHERE providers.id_provider = NEW.from INTO NEW.to;
+    SELECT id_factory FROM providers WHERE providers.id_provider = NEW._from INTO NEW._to;
     NEW.ret_time = localtime;
     RETURN NEW;
 END;
