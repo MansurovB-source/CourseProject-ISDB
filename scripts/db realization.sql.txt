@@ -90,11 +90,11 @@ CREATE TABLE subs_sausages
 
 CREATE TABLE providers
 (
-    id_provider    serial,
-    id_human       integer       NOT NULL,
-    salary         decimal(8, 2) NOT NULL CHECK (salary > 0),
-    id_factory     integer       NOT NULL,
-    delivery_place integer,
+    id_provider       serial,
+    id_human          integer       NOT NULL,
+    salary            decimal(8, 2) NOT NULL CHECK (salary > 0),
+    id_factory        integer       NOT NULL,
+    id_delivery_place integer,
     PRIMARY KEY (id_provider),
     FOREIGN KEY (id_human) REFERENCES humans (id_human)
         ON UPDATE CASCADE
@@ -102,7 +102,7 @@ CREATE TABLE providers
     FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    FOREIGN KEY (delivery_place) REFERENCES delivery_places (id_delivery_place)
+    FOREIGN KEY (id_delivery_place) REFERENCES delivery_places (id_delivery_place)
         ON UPDATE CASCADE
         ON DELETE SET NULL
 
@@ -222,7 +222,7 @@ CREATE TABLE storages
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
 );
 
-CREATE TABLE returns
+CREATE TABLE return_client
 (
     id_return       serial,
     from            integer NOT NULL,
@@ -271,15 +271,15 @@ CREATE TABLE farms
         ON DELETE CASCADE
 );
 
-CREATE TABLE return_factory
+CREATE TABLE return_provider
 (
-    id_ret_factory  serial,
+    id_ret_provider serial,
     from            integer NOT NULL,
     to              integer NOT NULL,
     id_sausage      integer NOT NULL,
     sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
     ret_time        time    NOT NULL,
-    PRIMARY KEY (id_ret_factory),
+    PRIMARY KEY (id_ret_provider),
     FOREIGN KEY (from) REFERENCES providers (id_provider)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
