@@ -97,32 +97,32 @@ BEGIN
     INTO weight;
     IF (weight > NEW.sausages_weight) THEN
         UPDATE storages
-        SET sausages_weight = sausages_weight - NEW.sausages_weight
+        SET sausages_weight = weight - NEW.sausages_weight
         WHERE (storages.id_sausage = NEW.id_sausage AND
                storages.id_factory =
                (SELECT providers.id_factory FROM providers WHERE (providers.id_provider = provider)));
         IF EXISTS(SELECT *
-                  FROM order_shedule
-                  WHERE order_shedule.id_provider = provider
-                    AND order_shedule.id_sausage =
+                  FROM order_schedule
+                  WHERE order_schedule.id_provider = provider
+                    AND order_schedule.id_sausage =
                         NEW.id_sausage
-                    AND order_shedule.del_time =
+                    AND order_schedule.del_time =
                         (current_date + 1)) THEN
-            UPDATE order_shedule
+            UPDATE order_schedule
             SET sausages_weight = sausages_weight + NEW.sausages_weight
-            WHERE order_shedule.id_provider = provider
-              AND order_shedule.id_sausage =
+            WHERE order_schedule.id_provider = provider
+              AND order_schedule.id_sausage =
                   NEW.id_sausage
-              AND order_shedule.del_time =
+              AND order_schedule.del_time =
                   current_date + 1;
         ELSE
-            INSERT INTO order_shedule(id_provider, id_sausage, sausages_weight, del_time)
+            INSERT INTO order_schedule(id_provider, id_sausage, sausages_weight, del_time)
             VALUES (provider, NEW.id_sausage, NEW.sausages_weight, current_date + 1);
         END IF;
     ELSE
         RAISE EXCEPTION 'We do not have this product in our storage, it would be soon';
     END IF;
-    NEW._from = provider;
+    NEW._to = provider;
     NEW.ord_time = localtimestamp;
     RETURN NEW;
 END;
@@ -146,17 +146,17 @@ DECLARE
     provider_payment integer;
 BEGIN
     SELECT id_client_payment
-    FROM client_payments
+    FROM clients_payments
     WHERE (id_client = NEW._from AND id_provider = NEW._to AND dept_date = current_date AND
            paying = FALSE)
     INTO client_payment;
-    SELECT price FROM sausages WHERE (sausages.id_sausage = New.id_sausage) INTO price;
-    IF client_payment THEN
-        UPDATE client_payments
+    SELECT sausages.price FROM sausages WHERE (sausages.id_sausage = NEW.id_sausage) INTO price;
+    IF (client_payment IS NOT NULL AND client_payment <> 0) THEN
+        UPDATE clients_payments
         SET sum = sum + price * NEW.sausages_weight
         WHERE id_client_payment = client_payment;
     ELSE
-        INSERT INTO client_payments(id_client, id_provider, sum, dept_date, paying, payment_date)
+        INSERT INTO clients_payments(id_client, id_provider, sum, dept_date, paying, payment_date)
         VALUES (NEW._from, NEW._to, price * NEW.sausages_weight, current_date, FALSE, NULL);
     END IF;
 
@@ -165,7 +165,7 @@ BEGIN
     FROM providers_payments
     WHERE (id_provider = NEW._to AND id_factory = factory AND dept_date = current_date AND paying = FALSE)
     INTO provider_payment;
-    IF provider_payment THEN
+    IF (provider_payment IS NOT NULL AND provider_payment <> 0) THEN
         UPDATE providers_payments
         SET sum = sum + price * NEW.sausages_weight
         WHERE id_provider_payment = provider_payment;
@@ -173,6 +173,7 @@ BEGIN
         INSERT INTO providers_payments(id_provider, id_factory, sum, dept_date, paying, payment_date)
         VALUES (NEW._to, factory, price * NEW.sausages_weight, current_date, FALSE, NULL);
     END IF;
+    RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
 
@@ -202,7 +203,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER client_pay
     BEFORE UPDATE
-    ON client_payments
+    ON clients_payments
     FOR EACH ROW
 EXECUTE PROCEDURE client_pay();
 ---------------------------------------------------------------------------------------------------------------
@@ -218,6 +219,7 @@ BEGIN
     NEW.id_factory = factory;
     NEW.paying = TRUE;
     NEW.payment_date = current_date;
+    RETURN NEW;
 END
 $$ language plpgsql;
 

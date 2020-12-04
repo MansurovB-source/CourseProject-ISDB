@@ -30,7 +30,7 @@ CREATE TABLE delivery_places
     id_delivery_place serial,
     id_location       integer NOT NULL,
     address           text    NOT NULL,
-    client_num        integer NOT NULL CHECK ( client_num > 0),
+    client_num        integer,
     PRIMARY KEY (id_delivery_place),
     FOREIGN KEY (id_location) REFERENCES locations (id_location)
         ON UPDATE CASCADE
@@ -39,20 +39,21 @@ CREATE TABLE delivery_places
 
 CREATE TABLE factories
 (
-    id_factory serial,
-    location   integer NOT NULL,
-    worker_num integer NOT NULL CHECK (worker_num > 0),
+    id_factory  serial,
+    name        text,
+    id_location integer NOT NULL,
+    worker_num  integer,
     PRIMARY KEY (id_factory),
-    FOREIGN KEY (location) REFERENCES locations (id_location)
+    FOREIGN KEY (id_location) REFERENCES locations (id_location)
 );
 
 CREATE TABLE animals
 (
-    id_animal serial,
-    name      text    NOT NULL,
-    location  integer NOT NULL,
+    id_animal   serial,
+    name        text    NOT NULL,
+    id_location integer NOT NULL,
     PRIMARY KEY (id_animal),
-    FOREIGN KEY (location) REFERENCES locations (id_location)
+    FOREIGN KEY (id_location) REFERENCES locations (id_location)
 );
 
 CREATE TABLE cars
@@ -86,6 +87,48 @@ CREATE TABLE subs_sausages
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
         ON UPDATE CASCADE
         ON DELETE CASCADE
+);
+
+CREATE TABLE factory_sausages
+(
+    id_factory integer NOT NULL,
+    id_sausage integer NOT NULL,
+    PRIMARY KEY (id_factory, id_sausage),
+    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE farms
+(
+    id_factory  integer NOT NULL,
+    id_location integer NOT NULL,
+    id_animal   integer NOT NULL,
+    PRIMARY KEY (id_factory, id_location, id_animal),
+    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_location) REFERENCES locations (id_location)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_animal) REFERENCES animals (id_animal)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE storages
+(
+    id_storage      serial,
+    id_factory      integer NOT NULL,
+    id_sausage      integer NOT NULL,
+    sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
+    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
 );
 
 CREATE TABLE providers
@@ -128,8 +171,8 @@ CREATE TABLE clients
 CREATE TABLE orders
 (
     id_order        serial,
-    _from            integer   NOT NULL,
-    _to              integer   NOT NULL,
+    _from           integer   NOT NULL,
+    _to             integer   NOT NULL,
     id_sausage      integer   NOT NULL,
     sausages_weight float     NOT NULL CHECK (sausages_weight > 0),
     ord_time        timestamp NOT NULL,
@@ -145,7 +188,30 @@ CREATE TABLE orders
 
 );
 
-CREATE TABLE client_payments
+CREATE TABLE order_schedule
+(
+    id_schedule     serial,
+    id_provider     integer NOT NULL,
+    id_sausage      integer NOT NULL,
+    sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
+    del_time        date    NOT NULL,
+    PRIMARY KEY (id_schedule),
+    FOREIGN KEY (id_provider) REFERENCES providers (id_provider)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
+);
+
+CREATE TABLE car_schedule
+(
+    id_schedule integer NOT NULL,
+    id_car      integer NOT NULL,
+    PRIMARY KEY (id_schedule, id_car)
+
+);
+
+
+CREATE TABLE clients_payments
 (
     id_client_payment serial  NOT NULL,
     id_client         integer NOT NULL,
@@ -180,55 +246,14 @@ CREATE TABLE providers_payments
         ON DELETE CASCADE
 );
 
-CREATE TABLE order_shedule
-(
-    id_shedule      serial,
-    id_provider     integer NOT NULL,
-    id_sausage      integer NOT NULL,
-    sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
-    del_time        date    NOT NULL,
-    PRIMARY KEY (id_shedule),
-    FOREIGN KEY (id_provider) REFERENCES providers (id_provider)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
-);
-
-CREATE TABLE car_shedule
-(
-    id_shedule integer NOT NULL,
-    id_car     integer NOT NULL,
-    FOREIGN KEY (id_shedule) REFERENCES order_shedule (id_shedule)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_car) REFERENCES cars (id_car)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    PRIMARY KEY (id_shedule, id_car)
-
-);
-
-CREATE TABLE storages
-(
-    id_storage      serial,
-    id_factory      integer NOT NULL,
-    id_sausage      integer NOT NULL,
-    sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
-    stor_life       date,
-    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
-);
-
 CREATE TABLE return_client
 (
     id_return       serial,
-    _from            integer NOT NULL,
-    _to              integer NOT NULL,
+    _from           integer NOT NULL,
+    _to             integer,
     id_sausage      integer NOT NULL,
     sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
-    ret_time        time    NOT NULL,
+    ret_time        time,
     PRIMARY KEY (id_return),
     FOREIGN KEY (_from) REFERENCES clients (id_client)
         ON UPDATE CASCADE
@@ -239,44 +264,14 @@ CREATE TABLE return_client
     FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
 );
 
-CREATE TABLE factory_sausages
-(
-    id_factory integer NOT NULL,
-    id_sausage integer NOT NULL,
-    PRIMARY KEY (id_factory, id_sausage),
-    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_sausage) REFERENCES sausages (id_sausage)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-
-CREATE TABLE farms
-(
-    id_factory  integer NOT NULL,
-    id_location integer NOT NULL,
-    id_animal   integer NOT NULL,
-    PRIMARY KEY (id_factory, id_location, id_animal),
-    FOREIGN KEY (id_factory) REFERENCES factories (id_factory)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_location) REFERENCES locations (id_location)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_animal) REFERENCES animals (id_animal)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-
 CREATE TABLE return_provider
 (
     id_ret_provider serial,
-    _from            integer NOT NULL,
-    _to              integer NOT NULL,
+    _from           integer NOT NULL,
+    _to             integer,
     id_sausage      integer NOT NULL,
     sausages_weight float   NOT NULL CHECK (sausages_weight > 0),
-    ret_time        time    NOT NULL,
+    ret_time        time,
     PRIMARY KEY (id_ret_provider),
     FOREIGN KEY (_from) REFERENCES providers (id_provider)
         ON UPDATE CASCADE
