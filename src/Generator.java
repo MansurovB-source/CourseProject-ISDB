@@ -37,10 +37,12 @@ public class Generator {
         generator.generatorReturnClient();
         generator.generatorReturnProvider();
 
-        try (PrintWriter out = new PrintWriter("data.sql", "UTF-8");
-             PrintWriter out1 = new PrintWriter("data1.sql", "UTF-8");
-             PrintWriter out2 = new PrintWriter("data2.sql", "Utf-8")) {
-            for (String s : generator.humans) {
+        try (PrintWriter out = new PrintWriter("d.sql", "UTF-8"))
+             //PrintWriter out1 = new PrintWriter("data1.sql", "UTF-8");
+             //PrintWriter out2 = new PrintWriter("data2.sql", "Utf-8"))
+             {
+
+                 for (String s : generator.humans) {
                 out.println(s);
             }
             out.println("/*--------------------------------------------------------------------------------------------------------------*/");
@@ -76,59 +78,59 @@ public class Generator {
             out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.subscriptions) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.sub_sausages) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.factory_sausages) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.farms) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.storages) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.providers) {
-                out1.println(s);
+                out.println(s);
             }
-            out1.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.clients) {
-                out2.println(s);
+                out.println(s);
             }
-            out2.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.orders) {
-                out2.println(s);
+                out.println(s);
             }
-            out2.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.car_schedule) {
-                out2.println(s);
+                out.println(s);
             }
-            out2.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.return_client) {
-                out2.println(s);
+                out.println(s);
             }
-            out2.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
             for (String s : generator.return_provider) {
-                out2.println(s);
+                out.println(s);
             }
-            out2.println("/*--------------------------------------------------------------------------------------------------------------*/");
+            out.println("/*--------------------------------------------------------------------------------------------------------------*/");
 
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -249,19 +251,19 @@ public class Generator {
     }
 
     public void generatorOrders() {
-        for (int i = 0; i < 20000; i++) {
+        for (int i = 0; i < 30000; i++) {
             orders.add(Orders.generate());
         }
     }
 
     public void generatorReturnClient() {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 6000; i++) {
             return_client.add(Return_Client.generate());
         }
     }
 
     public void generatorReturnProvider() {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 6000; i++) {
             return_provider.add(Return_Provider.generate());
         }
     }
