@@ -8,7 +8,7 @@ import java.util.Random;
  * @author Behruz Mansurov
  */
 public class Locations {
-    private static final Random random = new Random();
+    private static int i = 0;
     private static final String COUNTRY = "RUSSIA";
     private static final String[] CITY =
             {
@@ -18,6 +18,6 @@ public class Locations {
     private static final String TEMPLATES = "INSERT INTO locations(country, city) VALUES('%s', '%s');";
 
     public static String generate() {
-        return String.format(TEMPLATES, COUNTRY, CITY[random.nextInt(1)]);
+        return String.format(TEMPLATES, COUNTRY, CITY[i++]);
     }
 }

@@ -8,15 +8,16 @@ import java.util.Random;
  * @author Behruz Mansurov
  */
 public class Sausages {
+    private static int i = 0;
     private static Random random = new Random();
     private static int start_price = 50;
 
     private static String generateRandomSausage() {
-        return SAUSAGES[random.nextInt(SAUSAGES.length)];
+        return SAUSAGES[i++];
     }
 
     private static double generateRandomPrice() {
-        return start_price + random.nextInt(2951);
+        return start_price + random.nextInt(2950);
     }
 
     public static String generate() {

@@ -25,7 +25,7 @@ public class Humans {
 
     private static LocalDate generateRandomDate() {
         long start = begin_date.toEpochDay();
-        long end = LocalDate.now().toEpochDay();
+        long end = LocalDate.of(2002, 1, 1).toEpochDay();
         long current = start + random.nextInt((int) (end - start));
         return LocalDate.ofEpochDay(current);
     }

@@ -12,6 +12,6 @@ public class Cars {
     private static final String TEMPLATES = "INSERT INTO cars(capacity, id_factory) VALUES(%s, %s);";
 
     public static String generate() {
-        return String.format(TEMPLATES, 1000 + random.nextInt(9000), 1 + random.nextInt(9));
+        return String.format(TEMPLATES, 10000 + random.nextInt(30000), 1 + random.nextInt(9));
     }
 }

@@ -8,6 +8,7 @@ import java.util.Random;
  * @author Behruz Mansurov
  */
 public class Factories {
+    private static int i = 0;
     private static final Random random = new Random();
     private static final String FACTORIES[] =
             {
@@ -22,9 +23,9 @@ public class Factories {
                     "Талина",
                     "МЯСОПРОДУКТ"
             };
-    private static final String TEMPLATES = "INSERT INTO factories(name, id_location) VALUES('%s', %s);";
+    private static final String TEMPLATES = "INSERT INTO factories(name, id_location, worker_num) VALUES('%s', %s, %s);";
 
     public static String generate() {
-        return String.format(TEMPLATES, FACTORIES[random.nextInt(FACTORIES.length)], 1 + random.nextInt(1));
+        return String.format(TEMPLATES, FACTORIES[i++], 1 + random.nextInt(1), 0);
     }
 }
