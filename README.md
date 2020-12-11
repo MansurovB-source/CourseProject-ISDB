@@ -212,21 +212,35 @@ ID                    | 7
 **ДО:**
 
                                                         QUERY PLAN
+
 --------------------------------------------------------------------------------------------------------------------------
+
  Seq Scan on return_provider  (cost=0.00..165.38 rows=1 width=32) (actual time=0.018..0.697 rows=1 loops=1)
+
    Filter: ((_from = 259) AND (_to = 3) AND (id_sausage = 18) AND (ret_time = '14:34:45.511686'::time without time zone))
+
    Rows Removed by Filter: 5999
+
  Planning time: 0.074 ms
+
  Execution time: 0.715 ms
+
 (5 rows)
 
 **После:**
+   
                                                                         QUERY PLAN
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
+
  Index Scan using return_provider_from_to_sausage_rel_time on return_provider  (cost=0.28..8.31 rows=1 width=32) (actual time=0.007..0.008 rows=1 loops=1)
+
    Index Cond: ((_from = 259) AND (_to = 3) AND (id_sausage = 18) AND (ret_time = '14:34:45.511686'::time without time zone))
+
  Planning time: 0.063 ms
+
  Execution time: 0.024 ms
+
 (4 rows)
 
 **Вывод:**
