@@ -32,10 +32,10 @@
 ![модель базы данных](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/data-model/courseworkDM.png)
 
 ### Код на Java-е для массогово заполнения 
-![Код на Java](https://github.com/MansurovB-source/CourseProject-ISDB/tree/main/src)
+[Код на Java](https://github.com/MansurovB-source/CourseProject-ISDB/tree/main/src)
 
 ### Скрипты для массогово заполнения
-![Скрипты](https://github.com/MansurovB-source/CourseProject-ISDB/tree/main/scripts)
+[Скрипты](https://github.com/MansurovB-source/CourseProject-ISDB/tree/main/scripts)
 
 ### Сценарии использования
 Основные две сценарии использования: это действия от имени поставщика и действия от имени клиента (заказчик). 
@@ -117,7 +117,7 @@ ID                    | 7
 
 
 ### Функции:
-![Код функций](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/scripts/triggers.sql)
+[Код функций](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/scripts/triggers.sql)
 
 * `get_workers()` - функция позволяет получить всех своих поставщиков.
 * `get_clients_for_provider(id_provider integer)` - функция позволяет получить всех клиентов определенного поставщики.
@@ -126,7 +126,7 @@ ID                    | 7
 ### Триггеры:
 Для сохранения целостности введем 10 триггера. 
 
-![Код триггера](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/scripts/triggers.sql)
+[Код триггера](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/scripts/triggers.sql)
 
 * `inc_DelClientNum` - триггер срабатывающий при добавлении нового клиента. В области в котором принадлежит клиент, автоматически увеличивается количество клиентов. 
 * `dec_DelClientNum` - декремент.
