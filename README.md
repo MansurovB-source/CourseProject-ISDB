@@ -143,6 +143,7 @@ ID                    | 7
 Большое количество сценариев использования БД - с использованием объединений таблиц (получить по данному клиенту список его заказов, получить по данному поставщику список его клиентов). Все это будет соединиться через primary и foreign_key с проверкой на равенство. Вводить тут индексы не имеет смысла, так как postgres автоматически создает индексы для ключей и уникальных значений.
 
 При принятии заказа мы в таблице расписаний (order_schedule) ищем по определенным значениям есть ли запись и изменяем эту запись и поэтому имеет смысл добавить индекс. Поиск идет по 3 значениям (id_provider, id_sausage, del_time). Добавим `btree - index`  
+
 * `CREATE INDEX order_schedule_provider_sausage_deliv_time ON order_schedule using hash (id_provider, id_sausage, del_time);`
 
 **ДО:**
@@ -157,6 +158,7 @@ ID                    | 7
 >  (5 rows)
 
 **После:**
+
 >                                                                        QUERY PLAN
 > ------------------------------------------------------------------------------------------------------------------------------------------------------------
 >  Index Scan using order_schedule_provider_sausage_deliv_time on order_schedule  (cost=0.28..8.30 rows=1 width=24) (actual time=0.017..0.018 rows=1 loops=1)
@@ -165,14 +167,93 @@ ID                    | 7
 >  Execution time: 0.041 ms
 > (4 rows)
 
-##### Вывод:
+**Вывод:**
+
 Можно увидеть что добавления индекса помогло. В запросе используется индекс и время выполнения запросы в порядок меньше чем в запросе без индекса
-### Индексы:
-Когда клиент делает заказ срабатывают несколько триггеров, которые проверяют 
- 1. есть ли в нашем складе нужное количество продукции и поэтому имеет смысл добавить индекс
- 2. мы ищем есть ли запись в таблице расписание (order_schedule) и изменяем эту запись и поэтому имеет смысл добавить индекс
- 
-* `storages_sausage_factory`  
-* `order_schedule_provider_sausage_deliv_time` - декремент.
-* `return_client_from_to_sausage_rel_time` - триггер срабатывающий при добавление нового поставщика автоматически инкрементирует счетчик поставщиков цеха в котором работает.
-* `return_provider_from_to_sausage_rel_time` - декремент.
+
+
+Будут запросы, чтобы получить возврат. Скорее всего запрос будет таким получить возврат какой-то продукции в какой, то день от какого, то клиента на имя какого-то поставщика. Поиск будет идти по 4 значениям (_from, _to, id_sausage, ret_time). Добавим `btree - index`
+
+* `CREATE INDEX return_client_from_to_sausage_rel_time ON return_provider (_from, _to, id_sausage, ret_time);`
+
+**ДО:**
+
+                                                                               QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on return_client  (cost=0.00..179.62 rows=1 width=32) (actual time=0.696..0.696 rows=0 loops=1)
+   Filter: ((_from = 2150) AND (_to = 50) AND (id_sausage = 1) AND (sausages_weight = '5'::double precision) AND (ret_time = '14:33:33.657577'::time without time zone))
+   Rows Removed by Filter: 5983
+ Planning time: 0.086 ms
+ Execution time: 0.713 ms
+(5 rows)
+
+
+**После:**
+
+                                                                      QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using return_client_from_to_sausage_rel_time on return_client  (cost=0.28..8.31 rows=1 width=32) (actual time=0.020..0.020 rows=0 loops=1)
+   Index Cond: ((_from = 2150) AND (_to = 50) AND (id_sausage = 1) AND (ret_time = '14:33:33.657577'::time without time zone))
+   Filter: (sausages_weight = '5'::double precision)
+   Rows Removed by Filter: 1
+ Planning time: 0.110 ms
+ Execution time: 0.042 ms
+(6 rows)
+
+
+**Вывод:**
+
+Можно увидеть что добавления индекса помогло. В запросе используется индекс и время выполнения запросы в порядок меньше чем в запросе без индекса
+
+Аналогично как в предыдущем будет запрос для получения возврата от поставщика для какого то цеха
+
+* `CREATE INDEX return_provider_from_to_sausage_rel_time ON return_client (_from, _to, id_sausage, ret_time);`
+
+**ДО:**
+
+                                                        QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------------
+ Seq Scan on return_provider  (cost=0.00..165.38 rows=1 width=32) (actual time=0.018..0.697 rows=1 loops=1)
+   Filter: ((_from = 259) AND (_to = 3) AND (id_sausage = 18) AND (ret_time = '14:34:45.511686'::time without time zone))
+   Rows Removed by Filter: 5999
+ Planning time: 0.074 ms
+ Execution time: 0.715 ms
+(5 rows)
+
+**После:**
+                                                                        QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using return_provider_from_to_sausage_rel_time on return_provider  (cost=0.28..8.31 rows=1 width=32) (actual time=0.007..0.008 rows=1 loops=1)
+   Index Cond: ((_from = 259) AND (_to = 3) AND (id_sausage = 18) AND (ret_time = '14:34:45.511686'::time without time zone))
+ Planning time: 0.063 ms
+ Execution time: 0.024 ms
+(4 rows)
+
+**Вывод:**
+
+Как видим с индексом лучше.
+
+Две последние индексы будут использоваться когда запрос будет типа: сортировки по столбцам
+
+* ` select * from return_provider order by _from;`
+* ` select * from return_client order by _from;`
+
+
+                                                                          QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using return_client_from_to_sausage_rel_time on return_client  (cost=0.28..398.03 rows=5983 width=32) (actual time=0.080..4.483 rows=5983 loops=1)
+ Planning time: 0.099 ms
+ Execution time: 5.962 ms
+(3 rows)
+
+                                                                            QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using return_provider_from_to_sausage_rel_time on return_provider  (cost=0.28..398.26 rows=6000 width=32) (actual time=0.105..4.734 rows=6000 loops=1)
+ Planning time: 0.072 ms
+ Execution time: 6.207 ms
+(3 rows)
+
+
+И еще возможно в будущем у нас будет много видов колбасных изделий и много цехов и будет целесообразно добавить такой индекс:
+
+* `CREATE INDEX storages_sausage_factory ON storages (id_factory, id_sausage);`
