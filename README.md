@@ -148,24 +148,37 @@ ID                    | 7
 
 **ДО:**
 
->                                                QUERY PLAN
->  ----------------------------------------------------------------------------------------------------------
->   Seq Scan on order_schedule  (cost=0.00..73.72 rows=1 width=24) (actual time=0.017..0.387 rows=1 loops=1)
->     Filter: ((id_provider = 32) AND (id_sausage = 18) AND (del_time = '2020-12-05'::date))
->     Rows Removed by Filter: 2897
->   Planning time: 0.069 ms
->   Execution time: 0.404 ms
->  (5 rows)
+                                                QUERY PLAN
+
+  ----------------------------------------------------------------------------------------------------------
+
+   Seq Scan on order_schedule  (cost=0.00..73.72 rows=1 width=24) (actual time=0.017..0.387 rows=1 loops=1)
+
+     Filter: ((id_provider = 32) AND (id_sausage = 18) AND (del_time = '2020-12-05'::date))
+
+     Rows Removed by Filter: 2897
+
+   Planning time: 0.069 ms
+
+   Execution time: 0.404 ms
+
+  (5 rows)
 
 **После:**
 
->                                                                        QUERY PLAN
-> ------------------------------------------------------------------------------------------------------------------------------------------------------------
->  Index Scan using order_schedule_provider_sausage_deliv_time on order_schedule  (cost=0.28..8.30 rows=1 width=24) (actual time=0.017..0.018 rows=1 loops=1)
->    Index Cond: ((id_provider = 32) AND (id_sausage = 18) AND (del_time = '2020-12-05'::date))
->  Planning time: 0.095 ms
->  Execution time: 0.041 ms
-> (4 rows)
+                                                                        QUERY PLAN
+
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  Index Scan using order_schedule_provider_sausage_deliv_time on order_schedule  (cost=0.28..8.30 rows=1 width=24) (actual time=0.017..0.018 rows=1 loops=1)
+
+    Index Cond: ((id_provider = 32) AND (id_sausage = 18) AND (del_time = '2020-12-05'::date))
+
+  Planning time: 0.095 ms
+
+  Execution time: 0.041 ms
+
+ (4 rows)
 
 **Вывод:**
 
@@ -179,25 +192,41 @@ ID                    | 7
 **ДО:**
 
                                                                                QUERY PLAN
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
  Seq Scan on return_client  (cost=0.00..179.62 rows=1 width=32) (actual time=0.696..0.696 rows=0 loops=1)
+
    Filter: ((_from = 2150) AND (_to = 50) AND (id_sausage = 1) AND (sausages_weight = '5'::double precision) AND (ret_time = '14:33:33.657577'::time without time zone))
+
    Rows Removed by Filter: 5983
+
  Planning time: 0.086 ms
+
  Execution time: 0.713 ms
+
 (5 rows)
 
 
 **После:**
 
+
                                                                       QUERY PLAN
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------
+
  Index Scan using return_client_from_to_sausage_rel_time on return_client  (cost=0.28..8.31 rows=1 width=32) (actual time=0.020..0.020 rows=0 loops=1)
+
    Index Cond: ((_from = 2150) AND (_to = 50) AND (id_sausage = 1) AND (ret_time = '14:33:33.657577'::time without time zone))
+
    Filter: (sausages_weight = '5'::double precision)
+
    Rows Removed by Filter: 1
+
  Planning time: 0.110 ms
+
  Execution time: 0.042 ms
+
 (6 rows)
 
 
