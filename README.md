@@ -300,3 +300,6 @@ ID                    | 7
 И еще возможно в будущем у нас будет много видов колбасных изделий и много цехов и будет целесообразно добавить такой индекс:
 
 * `CREATE INDEX storages_sausage_factory ON storages (id_factory, id_sausage);`
+
+### Вызуализация фронт-енда на фигме  
+[визуализация](https://www.figma.com/file/79DBSSOA5OGTf3hb8MfHZA/BD?node-id=0%3A1)
