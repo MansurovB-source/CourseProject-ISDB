@@ -16,23 +16,23 @@ import javax.persistence.*;
 public class Provider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_provider;
+    private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_human")
-    private Human id_human;
+    @JoinColumn(name = "human_id", referencedColumnName = "id")
+    private Human human;
 
     private Double salary;
 
     @ManyToOne
-    @JoinColumn(name = "id_factory")
-    private Factory id_factory;
+    @JoinColumn(name = "factory_id", referencedColumnName = "id")
+    private Factory factory;
 
     @OneToOne
-    @JoinColumn(name = "id_delivery_place")
-    private DeliveryPlace id_delivery_place;
+    @JoinColumn(name = "delivery_place_id", referencedColumnName = "id")
+    private DeliveryPlace delivery_place;
 
     @OneToOne
-    @JoinColumn(name = "id")
-    private User id_user;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 }

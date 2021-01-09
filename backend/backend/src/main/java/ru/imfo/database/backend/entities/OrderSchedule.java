@@ -18,15 +18,15 @@ import java.util.Date;
 public class OrderSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_schedule;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_provider")
-    private Provider id_provider;
+    @JoinColumn(name = "provider_id", referencedColumnName = "id")
+    private Provider provider;
 
     @ManyToOne
-    @JoinColumn(name = "id_sausage")
-    private Sausage id_sausage;
+    @JoinColumn(name = "sausage_id", referencedColumnName = "id")
+    private Sausage sausage;
 
     private Double sausages_weight;
 
@@ -34,7 +34,7 @@ public class OrderSchedule {
 
     @ManyToMany
     @JoinTable(name = "car_schedule",
-            joinColumns = @JoinColumn(name = "id_schedule"),
-            inverseJoinColumns = @JoinColumn(name = "id_car"))
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "car_id", referencedColumnName = "id"))
     private Collection<Car> cars;
 }

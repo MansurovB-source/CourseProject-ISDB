@@ -15,11 +15,11 @@ import javax.persistence.*;
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_car;
+    private Long id;
 
     private Long capacity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_factory")
-    private Factory id_factory;
+    @JoinColumn(name = "factory_id", referencedColumnName = "id")
+    private Factory factory;
 }

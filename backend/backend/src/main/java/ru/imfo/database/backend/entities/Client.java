@@ -16,21 +16,31 @@ import javax.persistence.*;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_provider;
+    private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_human")
-    private Human id_human;
+    @JoinColumn(name = "human_id", referencedColumnName = "id")
+    private Human human;
 
     @OneToOne
-    @JoinColumn(name = "id_delivery_place")
-    private DeliveryPlace id_delivery_place;
+    @JoinColumn(name = "delivery_place_id", referencedColumnName = "id")
+    private DeliveryPlace delivery_place;
 
     @ManyToOne
-    @JoinColumn(name = "id_subscription")
-    private Subscription id_subscription;
+    @JoinColumn(name = "subscription_id", referencedColumnName = "id")
+    private Subscription subscription;
 
     @OneToOne
-    @JoinColumn(name = "id")
-    private User id_user;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    public Client(Human id_human, DeliveryPlace id_delivery_place, Subscription id_subscription, User id_user) {
+        this.human = id_human;
+        this.delivery_place = id_delivery_place;
+        this.subscription = id_subscription;
+        this.user = id_user;
+    }
+
+    public Client() {
+    }
 }

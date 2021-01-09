@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_order;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_client")
+    @JoinColumn(name = "_from", referencedColumnName = "id")
     private Client _from;
 
     @ManyToOne
-    @JoinColumn(name = "id_provider")
+    @JoinColumn(name = "_to", referencedColumnName = "id")
     private Provider _to;
 
     @ManyToOne
-    @JoinColumn(name = "id_sausage")
-    private Sausage id_sausage;
+    @JoinColumn(name = "sausage_id", referencedColumnName = "id")
+    private Sausage sausage;
 
     private Double sausages_weight;
 

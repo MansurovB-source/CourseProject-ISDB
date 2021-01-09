@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Sausage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_sausage;
+    private Long id;
 
     private String name;
 

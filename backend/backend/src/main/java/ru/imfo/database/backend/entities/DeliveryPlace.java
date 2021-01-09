@@ -15,11 +15,11 @@ import javax.persistence.*;
 public class DeliveryPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_delivery_place;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_location")
-    private Location id_location;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 
     private String address;
 

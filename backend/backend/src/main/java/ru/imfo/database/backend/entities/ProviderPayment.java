@@ -17,15 +17,15 @@ import java.util.Date;
 public class ProviderPayment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_provider_payment;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_provider")
-    private Provider id_provider;
+    @JoinColumn(name = "provider_id", referencedColumnName = "id")
+    private Provider provider;
 
     @ManyToOne
-    @JoinColumn(name = "id_factory")
-    private Factory id_factory;
+    @JoinColumn(name = "factory_id", referencedColumnName = "id")
+    private Factory factory;
 
     private Integer sum;
 

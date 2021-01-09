@@ -16,7 +16,7 @@ import java.util.Collection;
 public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_subscription;
+    private Long id;
 
     private String name;
 
@@ -26,7 +26,7 @@ public class Subscription {
 
     @ManyToMany
     @JoinTable(name = "subs_sausages",
-            joinColumns = @JoinColumn(name = "id_subscription"),
-            inverseJoinColumns = @JoinColumn(name = "id_sausage"))
+            joinColumns = @JoinColumn(name = "subscription_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "sausage_id", referencedColumnName = "id"))
     private Collection<Sausage> sausages;
 }

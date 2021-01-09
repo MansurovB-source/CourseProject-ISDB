@@ -16,15 +16,15 @@ import javax.persistence.*;
 public class Storage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_storage;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_factory")
-    private Factory id_factory;
+    @JoinColumn(name = "factory_id", referencedColumnName = "id")
+    private Factory factory;
 
     @ManyToOne
-    @JoinColumn(name = "id_sausage")
-    private Sausage id_sausage;
+    @JoinColumn(name = "sausage_id", referencedColumnName = "id")
+    private Sausage sausage;
 
     private double sausages_weigh;
 }

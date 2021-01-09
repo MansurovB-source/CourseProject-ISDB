@@ -17,19 +17,19 @@ import java.util.Date;
 public class ReturnProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_ret_provider;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_provider")
+    @JoinColumn(name = "_from", referencedColumnName = "id")
     private Provider _from;
 
     @ManyToOne
-    @JoinColumn(name = "id_factory")
+    @JoinColumn(name = "_to", referencedColumnName = "id")
     private Factory _to;
 
     @ManyToOne
-    @JoinColumn(name = "id_sausage")
-    private Sausage id_sausage;
+    @JoinColumn(name = "sausage_id", referencedColumnName = "id")
+    private Sausage sausage;
 
     private Double sausages_weight;
 

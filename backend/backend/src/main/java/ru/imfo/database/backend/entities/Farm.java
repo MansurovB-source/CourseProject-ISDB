@@ -15,17 +15,17 @@ import javax.persistence.*;
 public class Farm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_farm;
+    private Long id;
 
     @ManyToOne()
-    @JoinColumn(name = "id_factory")
-    private Factory id_factory;
+    @JoinColumn(name = "factory_id", referencedColumnName = "id")
+    private Factory factory;
 
     @ManyToOne()
-    @JoinColumn(name = "id_animal")
-    private Animal id_animal;
+    @JoinColumn(name = "animal_id", referencedColumnName = "id")
+    private Animal animal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_location")
-    private Location id_location;
+    @ManyToOne()
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 }

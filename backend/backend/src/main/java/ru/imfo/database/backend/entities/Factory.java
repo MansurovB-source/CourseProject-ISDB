@@ -16,19 +16,19 @@ import java.util.Collection;
 public class Factory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_factory;
+    private Long id;
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_location")
-    private Location id_location;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 
     private Long worker_num;
 
     @ManyToMany
     @JoinTable(name = "factory_sausages",
-            joinColumns = @JoinColumn(name = "id_factory"),
-            inverseJoinColumns = @JoinColumn(name = "id_sasage"))
+            joinColumns = @JoinColumn(name = "factory_id"),
+            inverseJoinColumns = @JoinColumn(name = "sausage_id"))
     private Collection<Sausage> sausages;
 }
