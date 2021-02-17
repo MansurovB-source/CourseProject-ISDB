@@ -28,6 +28,11 @@
 может заказать. Для VIP клиентов у нас будет VIP подписки заказы которых будут 
 обрабатываться отдельно.
 
+
+### Frontend
+[Frontend](https://github.com/MansurovB-source/CourseProject-ISDB-front_end)
+### Backend
+[Backend](https://github.com/MansurovB-source/CourseWorkBackEnd_ISDB)
 ### Даталогическая Модель базы данных 
 ![модель базы данных](https://github.com/MansurovB-source/CourseProject-ISDB/blob/main/data-model/courseworkDM.png)
 
